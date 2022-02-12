@@ -1,37 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageView
-        android:id="@+id/ivProfilePicture"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        tools:srcCompat="@tools:sample/avatars" />
+    <data>
+        <variable
+            name="tweet"
+            type="com.codepath.apps.restclienttemplate.models.Tweet" />
 
-    <TextView
-        android:id="@+id/tvScreenName"
-        android:layout_width="wrap_content"
+    </data>
+
+    <RelativeLayout
+        android:id="@+id/tweetContainer"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="0dp"
-        android:layout_toEndOf="@+id/ivProfilePicture"
-        android:text="TextView"
-        tools:text="ejs42" />
+        android:layout_margin="10dp">
 
-    <TextView
-        android:id="@+id/tvBody"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvScreenName"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="2dp"
-        android:layout_toEndOf="@id/ivProfilePicture"
-        android:text="TextView"
-        tools:text='YOU EVER LOG INTO A GAME, CHECK FRIENDS LIST AND SEE SOMEONE "LAST ONLINE 6 YEARS AGO" GET A PIT IN YOUR STOMACH THEN PROCEED TO RECONSIDER ALL YOUR LIFE CHOICES?' />
-</RelativeLayout>
+        <ImageView
+            android:id="@+id/ivProfilePicture"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            tools:srcCompat="@drawable/ic_round_account_circle_24" />
+
+        <LinearLayout
+            android:id="@+id/headingContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="2dp"
+            android:layout_toEndOf="@+id/ivProfilePicture"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="marquee"
+                android:fontFamily="@font/header_font"
+                android:maxWidth="200dp"
+                android:singleLine="true"
+                android:text='@{tweet.user.name + " @" + tweet.user.screenName}'
+                tools:text="Really Really Really Really Really Really Really Really long name  @Bengals" />
+
+            <TextView
+                android:id="@+id/tvRelStamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_weight="1"
+                android:text='@{"· " + tweet.relativeTimestamp}'
+                android:fontFamily="@font/body_font"
+                tools:text="· 1h" />
+
+        </LinearLayout>
+
+        <com.codepath.apps.restclienttemplate.utils.LinkifiedTextView
+            android:id="@+id/tvBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/headingContainer"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="2dp"
+            android:layout_toEndOf="@id/ivProfilePicture"
+            android:autoLink="web"
+            android:fontFamily="@font/body_font"
+            android:text="@{tweet.body}"
+            tools:text='YOU EVER LOG INTO A GAME, CHECK FRIENDS LIST AND SEE SOMEONE "LAST ONLINE 6 YEARS AGO" GET A PIT IN YOUR STOMACH THEN PROCEED TO RECONSIDER ALL YOUR LIFE CHOICES?' />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvBody"
+            android:layout_toEndOf="@id/ivProfilePicture"
+            android:layout_marginStart="5dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/ivRetweet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="#00FFFFFF"
+                android:src="@drawable/ic_retweet_state_selector" />
+
+            <ImageView
+                android:id="@+id/ivLike"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="#00FFFFFF"
+                android:src="@drawable/ic_heart_state_selector" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</layout>

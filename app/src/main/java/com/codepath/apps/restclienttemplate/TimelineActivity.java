@@ -1,6 +1,8 @@
 package com.codepath.apps.restclienttemplate;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -13,9 +15,11 @@ import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import okhttp3.Headers;
 
@@ -28,11 +32,17 @@ public class TimelineActivity extends AppCompatActivity {
     List<Tweet> tweets;
     TweetsAdapter adapter;
     SwipeRefreshLayout swipeContainer;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Tw@tter");
 
         client = TwitterApp.getRestClient(this);
 
@@ -59,6 +69,13 @@ public class TimelineActivity extends AppCompatActivity {
         // Recycler view setup: layout manager and the adapter
         rvTweets.setLayoutManager(new LinearLayoutManager(this));
         rvTweets.setAdapter(adapter);
+
+        LinearLayoutManager layoutManager = (LinearLayoutManager) rvTweets.getLayoutManager();
+        assert layoutManager != null;
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvTweets.getContext(),
+                layoutManager.getOrientation());
+
+        rvTweets.addItemDecoration(dividerItemDecoration);
         populateHomeTimeline();
     }
 
@@ -66,9 +83,17 @@ public class TimelineActivity extends AppCompatActivity {
         client.getHomeTimeline(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
-                Log.i(TAG, "onSuccess " + json.toString());
+                Log.i(TAG, "onSuccess: " + json.toString());
                 JSONArray jsonArray = json.jsonArray;
                 try {
+                    for(int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject tweet = jsonArray.getJSONObject(i);
+                        try {
+                            Log.i(TAG, "onSuccess Media Key " + tweet.getJSONObject("extended_entities").getJSONArray("media").toString());
+                            Log.i(TAG, "user: " + tweet.getJSONObject("user").toString());
+                        } catch (JSONException e) {
+                        }
+                    }
                     // Notify Data Set Change
                     adapter.clear();
                     adapter.addAll(Tweet.fromJsonArray(jsonArray));
@@ -81,7 +106,7 @@ public class TimelineActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                Log.e(TAG, "onFailure", throwable);
+                Log.e(TAG, "onFailure\nResponse: " + response, throwable);
                 swipeContainer.setRefreshing(false);
 
             }
