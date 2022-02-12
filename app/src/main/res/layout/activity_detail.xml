@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="tweet"
+            type="com.codepath.apps.restclienttemplate.models.Tweet" />
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical"
+        tools:context=".DetailActivity">
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/toolbar_main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/ivProfilePicture"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                app:srcCompat="@drawable/ic_round_account_circle_24" />
+
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@id/ivProfilePicture"
+                android:fontFamily="@font/header_font"
+                android:text="@{tweet.user.name}"
+                android:textSize="24sp"
+                tools:text="Cincinnati Bengals" />
+
+            <TextView
+                android:id="@+id/tvScreenName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvName"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@id/ivProfilePicture"
+                android:fontFamily="@font/body_font"
+                android:text='@{"@" + tweet.user.screenName}'
+                android:textSize="20sp"
+                tools:text="\@Bengals" />
+        </RelativeLayout>
+
+        <com.codepath.apps.restclienttemplate.utils.LinkifiedTextView
+            android:id="@+id/tvBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autoLink="all"
+            android:fontFamily="@font/body_font"
+            android:text="@{tweet.body}"
+            android:textSize="24sp"
+            tools:text="A little preview of Sunday’s touchdown dance?  @teehiggins5  |  @Real10jayy__  |  @Joe_MainMixon" />
+
+        <TextView
+            android:id="@+id/tvTimeStamp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/body_font"
+            android:text="@{tweet.timestamp}"
+            tools:text="5:48 PM · Feb 11, 2022" />
+
+    </LinearLayout>
+</layout>
