@@ -20,6 +20,7 @@
             android:id="@+id/ivProfilePicture"
             android:layout_width="32dp"
             android:layout_height="32dp"
+            android:transitionName="pfp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             tools:srcCompat="@drawable/ic_round_account_circle_24" />
@@ -63,19 +64,32 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/headingContainer"
             android:layout_marginStart="5dp"
+            android:layout_marginBottom="5dp"
             android:layout_marginTop="2dp"
             android:layout_toEndOf="@id/ivProfilePicture"
             android:autoLink="web"
             android:fontFamily="@font/body_font"
             android:text="@{tweet.body}"
+            android:transitionName="status"
             tools:text='YOU EVER LOG INTO A GAME, CHECK FRIENDS LIST AND SEE SOMEONE "LAST ONLINE 6 YEARS AGO" GET A PIT IN YOUR STOMACH THEN PROCEED TO RECONSIDER ALL YOUR LIFE CHOICES?' />
+
+        <ImageView
+            android:id="@+id/ivTweetImage"
+            android:transitionName="twimage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvBody"
+            android:layout_centerHorizontal="true"
+            android:visibility="gone"
+            tools:srcCompat="@tools:sample/avatars" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tvBody"
+            android:layout_below="@id/ivTweetImage"
             android:layout_toEndOf="@id/ivProfilePicture"
             android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
             android:orientation="horizontal">
 
             <ImageView
@@ -83,7 +97,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:backgroundTint="#00FFFFFF"
                 android:src="@drawable/ic_retweet_state_selector" />
 
             <ImageView
@@ -91,7 +104,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:backgroundTint="#00FFFFFF"
                 android:src="@drawable/ic_heart_state_selector" />
 
         </LinearLayout>

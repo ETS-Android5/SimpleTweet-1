@@ -5,6 +5,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -19,6 +20,7 @@ public class DetailActivity extends AppCompatActivity {
 
     ActivityDetailBinding binding;
     ImageView ivProfilePicture;
+    ImageView ivTweetImage;
     Toolbar toolbar;
     Tweet tweet;
 
@@ -30,6 +32,7 @@ public class DetailActivity extends AppCompatActivity {
         binding.setTweet(tweet);
 
         ivProfilePicture = findViewById(R.id.ivProfilePicture);
+        ivTweetImage = findViewById(R.id.ivTweetImage);
 
         Glide.with(this)
                 .load(tweet.user.publicImageUrl)
@@ -37,7 +40,16 @@ public class DetailActivity extends AppCompatActivity {
                 .placeholder(R.drawable.ic_round_account_circle_24)
                 .into(ivProfilePicture);
 
-        toolbar = findViewById(R.id.toolbar);
+        if(tweet.nativeImageUrl != null) {
+            Glide.with(this)
+                    .load(tweet.nativeImageUrl)
+                    .fitCenter()
+                    .override(1200, 675)
+                    .into(ivTweetImage);
+            ivTweetImage.setVisibility(View.VISIBLE);
+        }
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setTitle("Tweet");
         binding.executePendingBindings();

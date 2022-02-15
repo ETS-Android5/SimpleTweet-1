@@ -1,23 +1,24 @@
 package com.codepath.apps.restclienttemplate;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import androidx.core.util.Pair;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.codepath.apps.restclienttemplate.databinding.ItemTweetBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
-import org.parceler.Parcel;
 import org.parceler.Parcels;
 
 import java.util.List;
@@ -72,7 +73,9 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
 
         ItemTweetBinding binding;
 
+        View mView;
         ImageView ivProfilePicture;
+        ImageView ivNativeImage;
         ImageView ivRetweet;
         ImageView ivLike;
 
@@ -82,6 +85,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             ivRetweet = itemView.findViewById(R.id.ivRetweet);
             ivLike = itemView.findViewById(R.id.ivLike);
             ivProfilePicture = itemView.findViewById(R.id.ivProfilePicture);
+            ivNativeImage = itemView.findViewById(R.id.ivTweetImage);
         }
 
         public void bind(Tweet tweet) {
@@ -92,7 +96,12 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 public void onClick(View view) {
                     Intent i = new Intent(context, DetailActivity.class);
                     i.putExtra("tweet", Parcels.wrap(tweet));
-                    context.startActivity(i);
+                    Pair<View, String> p1 = Pair.create(binding.tvBody, "status");
+                    Pair<View, String> p2 = Pair.create(ivProfilePicture, "pfp");
+                    Pair<View, String> p3 = Pair.create(ivNativeImage, "twimage");
+                    ActivityOptionsCompat options = ActivityOptionsCompat
+                            .makeSceneTransitionAnimation((Activity) context, p1, p2, p3);
+                    context.startActivity(i, options.toBundle());
                 }
             });
 
@@ -121,6 +130,17 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                     .circleCrop()
                     .placeholder(R.drawable.ic_round_account_circle_24)
                     .into(ivProfilePicture);
+
+            if(tweet.nativeImageUrl != null) {
+                ivNativeImage.setVisibility(View.VISIBLE);
+                Log.i(TAG, "here");
+                Glide.with(context).load(tweet.nativeImageUrl)
+                        .fitCenter()
+                        .override(680, 510)
+                        .into(ivNativeImage);
+            } else {
+                ivNativeImage.setVisibility(View.GONE);
+            }
 
             binding.executePendingBindings();
         }
