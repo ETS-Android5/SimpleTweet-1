@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import androidx.core.util.Pair;
 
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,8 @@ import com.bumptech.glide.Glide;
 import com.codepath.apps.restclienttemplate.databinding.ItemTweetBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.List;
@@ -95,7 +98,10 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 @Override
                 public void onClick(View view) {
                     Intent i = new Intent(context, DetailActivity.class);
-                    i.putExtra("tweet", Parcels.wrap(tweet));
+                    Bundle extras = new Bundle();
+                    extras.putSerializable("image_map", tweet.nativeImagePair);
+                    extras.putParcelable("tweet", Parcels.wrap(tweet));
+                    i.putExtras(extras);
                     Pair<View, String> p1 = Pair.create(binding.tvBody, "status");
                     Pair<View, String> p2 = Pair.create(ivProfilePicture, "pfp");
                     Pair<View, String> p3 = Pair.create(ivNativeImage, "twimage");
@@ -111,9 +117,10 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 public void onClick(View view) {
                     tweet.retweet(!tweet.retweeted);
                     view.setSelected(tweet.retweeted);
+                    tweet.retweetCount = tweet.retweeted ? tweet.retweetCount + 1 : tweet.retweetCount - 1;
+                    binding.tvRetweetCount.setText(String.valueOf(tweet.retweetCount));
                 }
             });
-
 
             ivLike.setSelected(tweet.liked);
             ivLike.setOnClickListener(new View.OnClickListener() {
@@ -121,10 +128,10 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 public void onClick(View view) {
                     tweet.like(!tweet.liked);
                     view.setSelected(tweet.liked);
+                    tweet.favoritesCount = tweet.liked ? tweet.favoritesCount + 1 : tweet.favoritesCount - 1;
+                    binding.tvFavCount.setText(String.valueOf(tweet.favoritesCount));
                 }
             });
-
-
 
             Glide.with(context).load(tweet.user.publicImageUrl)
                     .circleCrop()
@@ -132,11 +139,10 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                     .into(ivProfilePicture);
 
             if(tweet.nativeImageUrl != null) {
-                ivNativeImage.setVisibility(View.VISIBLE);
-                Log.i(TAG, "here");
+                int[] dimens = tweet.nativeImagePair.get(tweet.nativeImageUrl);
                 Glide.with(context).load(tweet.nativeImageUrl)
                         .fitCenter()
-                        .override(680, 510)
+                        .override(dimens[0], dimens[1])
                         .into(ivNativeImage);
             } else {
                 ivNativeImage.setVisibility(View.GONE);

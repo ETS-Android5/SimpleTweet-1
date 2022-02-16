@@ -11,6 +11,9 @@
 
     </data>
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -81,7 +84,7 @@
             android:transitionName="twimage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
+            app:goneUnless="@{tweet.nativeImageUrl != null}"
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
@@ -97,4 +100,5 @@
             tools:text="5:48 PM · Feb 11, 2022" />
 
     </LinearLayout>
+    </ScrollView>
 </layout>

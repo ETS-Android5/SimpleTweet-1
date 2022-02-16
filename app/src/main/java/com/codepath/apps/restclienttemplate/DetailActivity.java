@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,8 +13,12 @@ import com.bumptech.glide.Glide;
 import com.codepath.apps.restclienttemplate.databinding.ActivityDetailBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.parceler.Parcels;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class DetailActivity extends AppCompatActivity {
@@ -28,7 +33,13 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
-        tweet = (Tweet) Parcels.unwrap(getIntent().getParcelableExtra("tweet"));
+        Map<String, int[]> imageMap = new HashMap<>();
+
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        tweet = (Tweet) Parcels.unwrap(extras.getParcelable("tweet"));
+        imageMap = (Map<String, int[]>) extras.getSerializable("image_map");
+
         binding.setTweet(tweet);
 
         ivProfilePicture = findViewById(R.id.ivProfilePicture);
@@ -41,12 +52,13 @@ public class DetailActivity extends AppCompatActivity {
                 .into(ivProfilePicture);
 
         if(tweet.nativeImageUrl != null) {
+            int[] dimens = imageMap.get(tweet.nativeImageUrl);
             Glide.with(this)
                     .load(tweet.nativeImageUrl)
                     .fitCenter()
-                    .override(1200, 675)
+                    .override(dimens[0], dimens[1])
                     .into(ivTweetImage);
-            ivTweetImage.setVisibility(View.VISIBLE);
+            //ivTweetImage.setVisibility(View.VISIBLE);
         }
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);

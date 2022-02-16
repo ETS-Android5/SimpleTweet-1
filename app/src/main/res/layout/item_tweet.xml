@@ -14,6 +14,7 @@
         android:id="@+id/tweetContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
         android:layout_margin="10dp">
 
         <ImageView
@@ -80,7 +81,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/tvBody"
             android:layout_centerHorizontal="true"
-            android:visibility="gone"
+            app:goneUnless="@{tweet.nativeImageUrl != null}"
             tools:srcCompat="@tools:sample/avatars" />
 
         <LinearLayout
@@ -99,12 +100,28 @@
                 android:layout_weight="1"
                 android:src="@drawable/ic_retweet_state_selector" />
 
+            <TextView
+                android:id="@+id/tvRetweetCount"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@{String.valueOf(tweet.retweetCount)}"
+                tools:text="2,769" />
+
             <ImageView
                 android:id="@+id/ivLike"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:src="@drawable/ic_heart_state_selector" />
+
+            <TextView
+                android:id="@+id/tvFavCount"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@{String.valueOf(tweet.favoritesCount)}"
+                tools:text="36.7k" />
 
         </LinearLayout>
 

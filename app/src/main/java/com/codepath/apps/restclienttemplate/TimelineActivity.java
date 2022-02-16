@@ -2,6 +2,7 @@ package com.codepath.apps.restclienttemplate;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.databinding.BindingAdapter;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -9,8 +10,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.codepath.apps.restclienttemplate.utils.EndlessRecyclerViewScrollListener;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
@@ -31,6 +34,7 @@ public class TimelineActivity extends AppCompatActivity {
     RecyclerView rvTweets;
     List<Tweet> tweets;
     TweetsAdapter adapter;
+    EndlessRecyclerViewScrollListener scrollListener;
     SwipeRefreshLayout swipeContainer;
     Toolbar toolbar;
 
@@ -57,42 +61,80 @@ public class TimelineActivity extends AppCompatActivity {
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Log.i(TAG, "onRefresh!");
                 populateHomeTimeline();
             }
         });
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         // Find the recycler view
         rvTweets = findViewById(R.id.rvTweets);
         // Init the list of tweets and adapter
         tweets = new ArrayList<>();
         adapter = new TweetsAdapter(this, tweets);
-        // Recycler view setup: layout manager and the adapter
-        rvTweets.setLayoutManager(new LinearLayoutManager(this));
         rvTweets.setAdapter(adapter);
-
-        LinearLayoutManager layoutManager = (LinearLayoutManager) rvTweets.getLayoutManager();
+        // Recycler view setup: layout manager and the adapter
+        rvTweets.setLayoutManager(layoutManager);
         assert layoutManager != null;
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvTweets.getContext(),
                 layoutManager.getOrientation());
 
+        scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                Log.i(TAG, "onLoadMore: " + page);
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                loadMoreData();
+            }
+        };
+
         rvTweets.addItemDecoration(dividerItemDecoration);
+        rvTweets.addOnScrollListener(scrollListener);
         populateHomeTimeline();
+    }
+
+    @BindingAdapter("app:goneUnless")
+    public static void goneUnless(View view, Boolean visible) {
+        view.setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
+
+    private void loadMoreData() {
+        // 1. Send an API request to retrieve appropriate paginated data
+        client.getNextPageOfTweets(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                Log.i(TAG, "onSuccess for loadMOreData! " + json.toString());
+                // 2. Deserialize and construct new model objects from the API response
+                JSONArray jsonArray = json.jsonArray;
+                try {
+                    List<Tweet> tweets = Tweet.fromJsonArray(jsonArray);
+                    // 3. Append the new data objects to the existing set of items inside the array of items
+                    // 4. Notify the adapter of the new items made with `notifyItemRangeInserted()`
+                    adapter.addAll(tweets);
+                    adapter.notifyItemRangeInserted(adapter.getItemCount() - tweets.size(), tweets.size());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Log.i(TAG, "onFailure for loadMoreData!", throwable);
+            }
+        }, tweets.get(tweets.size() - 1).id - 1);
+
+
     }
 
     private void populateHomeTimeline() {
         client.getHomeTimeline(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
-                Log.i(TAG, "onSuccess: " + json.toString());
                 JSONArray jsonArray = json.jsonArray;
                 try {
                     for(int i = 0; i < jsonArray.length(); i++) {
                         JSONObject tweet = jsonArray.getJSONObject(i);
-                        try {
-                            Log.i(TAG, "onSuccess Media Key " + tweet.getJSONObject("extended_entities").getJSONArray("media").toString());
-                            Log.i(TAG, "user: " + tweet.getJSONObject("user").toString());
-                        } catch (JSONException e) {
-                        }
                     }
                     // Notify Data Set Change
                     adapter.clear();
