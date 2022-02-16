@@ -5,5 +5,9 @@
     <string name="login_label">Log in</string>
     <string name="intent_scheme">oauth</string>
     <string name="intent_host">cprest</string>
+    <string name="tweet">Tweet</string>
+    <string name="et_hint">What\'s up?</string>
+    <string name="w_empty_tweet">Sorry, tweets can\'t be empty</string>
+    <string name="w_max_tweet_length">Sorry, your tweet is too long</string>
 
 </resources>
