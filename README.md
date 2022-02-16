@@ -1,6 +1,6 @@
 # Project 2 - *Tw@ter*
 
-**Tw@ter* is an android app that allows a user to view his Twitter timeline. The app utilizes [Twitter REST API](https://dev.twitter.com/rest/public).
+**Tw@ter** is an android app that allows a user to view his Twitter timeline. The app utilizes [Twitter REST API](https://dev.twitter.com/rest/public).
 
 Time spent: **12** hours spent in total
 
