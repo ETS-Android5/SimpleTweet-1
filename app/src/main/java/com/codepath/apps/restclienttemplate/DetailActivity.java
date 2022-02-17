@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.codepath.apps.restclienttemplate.databinding.ActivityDetailBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
@@ -53,9 +54,11 @@ public class DetailActivity extends AppCompatActivity {
 
         if(tweet.nativeImageUrl != null) {
             int[] dimens = imageMap.get(tweet.nativeImageUrl);
+            final int RADIUS = 30;
             Glide.with(this)
                     .load(tweet.nativeImageUrl)
                     .fitCenter()
+                    .transform(new RoundedCorners(RADIUS))
                     .override(dimens[0], dimens[1])
                     .into(ivTweetImage);
             //ivTweetImage.setVisibility(View.VISIBLE);

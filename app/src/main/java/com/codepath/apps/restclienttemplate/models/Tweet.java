@@ -58,6 +58,8 @@ public class Tweet {
         tweet.user = User.fromJson((isRetweet ? jsonObject.getJSONObject("retweeted_status") : jsonObject).getJSONObject("user"));
         tweet.timestamp = TimeFormatter.getTimeStamp(tweet.createdAt);
         tweet.relativeTimestamp = TimeFormatter.getTimeDifference(tweet.createdAt);
+        tweet.retweeted = (isRetweet ? jsonObject.getJSONObject("retweeted_status") : jsonObject).getBoolean("retweeted");
+        tweet.liked = (isRetweet ? jsonObject.getJSONObject("retweeted_status") : jsonObject).getBoolean("favorited");
         tweet.retweetCount = (isRetweet ? jsonObject.getJSONObject("retweeted_status") : jsonObject).getInt("retweet_count");
         tweet.favoritesCount = (isRetweet ? jsonObject.getJSONObject("retweeted_status") : jsonObject).getInt("favorite_count");
         return tweet;

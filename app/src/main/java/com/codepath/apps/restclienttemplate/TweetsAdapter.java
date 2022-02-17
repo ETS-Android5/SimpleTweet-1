@@ -17,6 +17,7 @@ import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.codepath.apps.restclienttemplate.databinding.ItemTweetBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
@@ -139,9 +140,11 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                     .into(ivProfilePicture);
 
             if(tweet.nativeImageUrl != null) {
+                final int RADIUS = 30;
                 int[] dimens = tweet.nativeImagePair.get(tweet.nativeImageUrl);
                 Glide.with(context).load(tweet.nativeImageUrl)
                         .fitCenter()
+                        .transform(new RoundedCorners(RADIUS))
                         .override(dimens[0], dimens[1])
                         .into(ivNativeImage);
             } else {
