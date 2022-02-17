@@ -12,10 +12,38 @@
         android:layout_height="match_parent"
         tools:context=".ComposeActivity">
 
+        <LinearLayout
+            android:id="@+id/parentUserContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="10"
+                app:srcCompat="@drawable/ic_baseline_arrow_downward_24" />
+
+            <TextView
+                android:id="@+id/parentScreenName"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="90"
+                android:ellipsize="end"
+                android:lines="1"
+                android:text="TextView"
+                tools:text="In reply to epiccurious" />
+        </LinearLayout>
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/etLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/parentUserContainer"
             app:counterEnabled="true"
             app:counterMaxLength="250"
             app:counterTextAppearance="@style/counterText"

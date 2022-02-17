@@ -1,10 +1,5 @@
 package com.codepath.apps.restclienttemplate.models;
 
-import android.util.Log;
-
-import androidx.core.text.HtmlCompat;
-import androidx.core.util.Pair;
-
 import com.codepath.apps.restclienttemplate.utils.TimeFormatter;
 
 import org.json.JSONArray;
@@ -15,7 +10,6 @@ import org.parceler.Parcel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Parcel
 public class Tweet {
@@ -27,6 +21,8 @@ public class Tweet {
     public String nativeImageUrl;
     public HashMap<String, int[]> nativeImagePair = new HashMap<>();
     public User user;
+    public User retweeter;
+    public boolean isRetweet;
     public int retweetCount;
     public int favoritesCount;
     public boolean retweeted = false;
@@ -40,7 +36,7 @@ public class Tweet {
         JSONObject nativeImageDimens;
         int[] dimens;
 
-        boolean isRetweet = jsonObject.getString("full_text").startsWith("RT");
+        tweet.isRetweet = jsonObject.getString("full_text").startsWith("RT");
         try {
             JSONObject mediaObject = getTwimage(jsonObject.getJSONObject("entities").getJSONArray("media"));
             if(mediaObject != null) {
@@ -52,16 +48,19 @@ public class Tweet {
         } catch (JSONException ignored) {
         }
         tweet.id = jsonObject.getLong("id");
-        tweet.body += isRetweet ? "RT " : "";
-        tweet.body += (isRetweet ? jsonObject.getJSONObject("retweeted_status") : jsonObject).getString("full_text");
-        tweet.createdAt = (isRetweet ? jsonObject.getJSONObject("retweeted_status") : jsonObject).getString("created_at");
-        tweet.user = User.fromJson((isRetweet ? jsonObject.getJSONObject("retweeted_status") : jsonObject).getJSONObject("user"));
+        tweet.body += (tweet.isRetweet ? jsonObject.getJSONObject("retweeted_status") : jsonObject).getString("full_text");
+        tweet.createdAt = (tweet.isRetweet ? jsonObject.getJSONObject("retweeted_status") : jsonObject).getString("created_at");
+        tweet.user = User.fromJson((tweet.isRetweet ? jsonObject.getJSONObject("retweeted_status") : jsonObject).getJSONObject("user"));
         tweet.timestamp = TimeFormatter.getTimeStamp(tweet.createdAt);
         tweet.relativeTimestamp = TimeFormatter.getTimeDifference(tweet.createdAt);
-        tweet.retweeted = (isRetweet ? jsonObject.getJSONObject("retweeted_status") : jsonObject).getBoolean("retweeted");
-        tweet.liked = (isRetweet ? jsonObject.getJSONObject("retweeted_status") : jsonObject).getBoolean("favorited");
-        tweet.retweetCount = (isRetweet ? jsonObject.getJSONObject("retweeted_status") : jsonObject).getInt("retweet_count");
-        tweet.favoritesCount = (isRetweet ? jsonObject.getJSONObject("retweeted_status") : jsonObject).getInt("favorite_count");
+        tweet.retweeted = (tweet.isRetweet ? jsonObject.getJSONObject("retweeted_status") : jsonObject).getBoolean("retweeted");
+        tweet.liked = (tweet.isRetweet ? jsonObject.getJSONObject("retweeted_status") : jsonObject).getBoolean("favorited");
+        tweet.retweetCount = (tweet.isRetweet ? jsonObject.getJSONObject("retweeted_status") : jsonObject).getInt("retweet_count");
+        tweet.favoritesCount = (tweet.isRetweet ? jsonObject.getJSONObject("retweeted_status") : jsonObject).getInt("favorite_count");
+
+        if(tweet.isRetweet) {
+            tweet.retweeter = User.fromJson((jsonObject.getJSONObject("user")));
+        }
         return tweet;
     }
 

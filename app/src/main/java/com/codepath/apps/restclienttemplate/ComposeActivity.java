@@ -32,6 +32,9 @@ public class ComposeActivity extends AppCompatActivity {
     public static final int MAX_TWEET_LENGTH = 140;
 
     ActivityComposeBinding binding;
+    boolean isReply;
+    String parentScreenName;
+    String replyPrefix;
 
     TwitterClient client;
 
@@ -39,7 +42,18 @@ public class ComposeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_compose);
-
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            isReply = extras.getBoolean("isReply", false);
+            if (isReply) {
+                binding.parentUserContainer.setVisibility(View.VISIBLE);
+                parentScreenName = extras.getString("parent_user_screen_name");
+                replyPrefix = String.format("@%s", parentScreenName);
+                binding.parentScreenName.setText(parentScreenName);
+                binding.etCompose.setText(replyPrefix);
+            }
+        }
+        binding.etCompose.requestFocus();
         client = TwitterApp.getRestClient(this);
 
         // Set click listener on button
@@ -56,8 +70,8 @@ public class ComposeActivity extends AppCompatActivity {
                     return;
                 }
                 Snackbar.make(ComposeActivity.this, binding.btnTweet, tweetContent, Snackbar.LENGTH_LONG).show();
-                // Make API call to Twitter to publish
-                client.publishTweet(tweetContent, new JsonHttpResponseHandler() {
+
+                JsonHttpResponseHandler handler = new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Headers headers, JSON json) {
                         Log.i(TAG, "onSuccess to publish tweet");
@@ -79,7 +93,18 @@ public class ComposeActivity extends AppCompatActivity {
                     public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                         Log.e(TAG, "onFailure to publish tweet", throwable);
                     }
-                });
+                };
+
+                // Make API call to Twitter to publish
+                if(isReply) {
+                    if (!tweetContent.startsWith(replyPrefix)) {
+                        Snackbar.make(ComposeActivity.this, binding.btnTweet, "Replies must start with: " + replyPrefix, Snackbar.LENGTH_LONG).show();
+                        return;
+                    }
+                    client.publishTweet(tweetContent, extras.getLong("parent_id"), handler);
+                } else {
+                    client.publishTweet(tweetContent, handler);
+                }
             }
         });
 

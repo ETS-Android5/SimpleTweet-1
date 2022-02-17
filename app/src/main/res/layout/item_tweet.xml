@@ -17,17 +17,45 @@
         android:background="?android:attr/selectableItemBackground"
         android:layout_margin="10dp">
 
+        <LinearLayout
+            android:id="@+id/retweeterContainer"
+            android:layout_width="match_parent"
+            android:layout_height="18dp"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal"
+            app:goneUnless="@{tweet.isRetweet}">
+
+            <ImageView
+                android:id="@+id/ivRetweetIndicator"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="10"
+                app:srcCompat="@drawable/ic_vector_retweet_stroke" />
+
+            <TextView
+                android:id="@+id/tvRetweeterName"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="90"
+                android:fontFamily="@font/header_font"
+                android:lines="1"
+                android:text='@{tweet.retweeter.name + " Retweeted"}'
+                android:textSize="14sp" />
+        </LinearLayout>
+
         <ImageView
             android:id="@+id/ivProfilePicture"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:transitionName="pfp"
+            android:layout_below="@id/retweeterContainer"
             android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
+            android:layout_alignParentTop="false"
+            android:transitionName="pfp"
             tools:srcCompat="@drawable/ic_round_account_circle_24" />
 
         <LinearLayout
             android:id="@+id/headingContainer"
+            android:layout_below="@id/retweeterContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
@@ -65,8 +93,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/headingContainer"
             android:layout_marginStart="5dp"
-            android:layout_marginBottom="5dp"
             android:layout_marginTop="2dp"
+            android:layout_marginBottom="5dp"
             android:layout_toEndOf="@id/ivProfilePicture"
             android:autoLink="web"
             android:fontFamily="@font/body_font"
@@ -76,34 +104,51 @@
 
         <ImageView
             android:id="@+id/ivTweetImage"
-            android:transitionName="twimage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/tvBody"
-            android:layout_centerHorizontal="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="5dp"
+            android:layout_toEndOf="@+id/ivProfilePicture"
+            android:transitionName="twimage"
             app:goneUnless="@{tweet.nativeImageUrl != null}"
             tools:srcCompat="@tools:sample/avatars" />
 
         <LinearLayout
+            android:id="@+id/inlineActionBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/ivTweetImage"
-            android:layout_toEndOf="@id/ivProfilePicture"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
+            android:layout_toEndOf="@id/ivProfilePicture"
+            android:gravity="center_horizontal"
             android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/ivReply"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="2"
+                android:background="?android:selectableItemBackground"
+                app:srcCompat="@drawable/ic_baseline_reply_24" />
+
 
             <ImageView
                 android:id="@+id/ivRetweet"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
+                android:background="?android:selectableItemBackground"
                 android:src="@drawable/ic_retweet_state_selector" />
 
             <TextView
                 android:id="@+id/tvRetweetCount"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:text="@{String.valueOf(tweet.retweetCount)}"
                 tools:text="2,769" />
@@ -111,14 +156,17 @@
             <ImageView
                 android:id="@+id/ivLike"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
+                android:background="?android:selectableItemBackground"
                 android:src="@drawable/ic_heart_state_selector" />
 
             <TextView
                 android:id="@+id/tvFavCount"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:text="@{String.valueOf(tweet.favoritesCount)}"
                 tools:text="36.7k" />
@@ -126,4 +174,5 @@
         </LinearLayout>
 
     </RelativeLayout>
+
 </layout>

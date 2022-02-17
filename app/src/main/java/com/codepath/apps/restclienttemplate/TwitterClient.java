@@ -5,7 +5,6 @@ import android.content.Context;
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.oauth.OAuthBaseClient;
-import com.github.scribejava.apis.FlickrApi;
 import com.github.scribejava.apis.TwitterApi;
 import com.github.scribejava.core.builder.api.BaseApi;
 
@@ -54,12 +53,20 @@ public class TwitterClient extends OAuthBaseClient {
 		 *    i.e client.post(apiUrl, params, handler);
 		 */
 		String apiUrl = getApiUrl("/statuses/home_timeline.json");
-		// Can specify query string params directly or through RequestParams.
+			// Can specify query string params directly or through RequestParams.
 		RequestParams params = new RequestParams();
 		params.put("count", 25);
 		params.put("since_id", 1);
 		params.put("tweet_mode", "extended");
-		params.put("exclude_replies", true);
+		client.get(apiUrl, params, handler);
+	}
+
+	public void getNextPageOfTweets(JsonHttpResponseHandler handler, long maxId) {
+		String apiUrl = getApiUrl("statuses/home_timeline.json");
+		RequestParams params = new RequestParams();
+		params.put("count", 25);
+		params.put("max_id", maxId);
+		params.put("tweet_mode", "extended");
 		client.get(apiUrl, params, handler);
 	}
 
@@ -82,16 +89,13 @@ public class TwitterClient extends OAuthBaseClient {
 		client.post(apiUrl, params, "", handler);
 	}
 
-	public void getNextPageOfTweets(JsonHttpResponseHandler handler, long maxId) {
-		String apiUrl = getApiUrl("statuses/home_timeline.json");
+	public void publishTweet(String tweetContent, long parentStatusId, JsonHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("/statuses/update.json");
+		// Can specify query string params directly or through RequestParams.
 		RequestParams params = new RequestParams();
-		params.put("count", 25);
-		params.put("max_id", maxId);
+		params.put("status", tweetContent);
+		params.put("in_reply_to_status_id", parentStatusId);
 		params.put("tweet_mode", "extended");
-		params.put("exclude_replies", true);
-		client.get(apiUrl, params, handler);
+		client.post(apiUrl, params, "", handler);
 	}
-
-
-
 }

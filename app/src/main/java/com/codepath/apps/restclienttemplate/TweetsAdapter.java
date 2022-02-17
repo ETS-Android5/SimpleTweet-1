@@ -3,10 +3,7 @@ package com.codepath.apps.restclienttemplate;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import androidx.core.util.Pair;
-
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +11,7 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.util.Pair;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -21,8 +19,6 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.codepath.apps.restclienttemplate.databinding.ItemTweetBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.List;
@@ -131,6 +127,17 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                     view.setSelected(tweet.liked);
                     tweet.favoritesCount = tweet.liked ? tweet.favoritesCount + 1 : tweet.favoritesCount - 1;
                     binding.tvFavCount.setText(String.valueOf(tweet.favoritesCount));
+                }
+            });
+
+            binding.ivReply.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent i = new Intent(context, ComposeActivity.class);
+                    i.putExtra("parent_id", tweet.id);
+                    i.putExtra("parent_user_screen_name", tweet.user.screenName);
+                    i.putExtra("isReply", true);
+                    context.startActivity(i);
                 }
             });
 
