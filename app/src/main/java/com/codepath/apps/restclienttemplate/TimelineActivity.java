@@ -13,14 +13,17 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.BindingAdapter;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.codepath.apps.restclienttemplate.databinding.ActivityTimelineBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.utils.EndlessRecyclerViewScrollListener;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +40,7 @@ public class TimelineActivity extends AppCompatActivity {
     public static final String TAG = "TimelineActivity";
     public static final int REQUEST_CODE = 20;
 
+    ActivityTimelineBinding binding;
     TwitterClient client;
     RecyclerView rvTweets;
     List<Tweet> tweets;
@@ -48,7 +52,7 @@ public class TimelineActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_timeline);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_timeline);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
@@ -72,6 +76,14 @@ public class TimelineActivity extends AppCompatActivity {
             }
         });
 
+        binding.composeFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(TimelineActivity.this, ComposeActivity.class);
+                startActivityForResult(i, REQUEST_CODE);
+            }
+        });
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         // Find the recycler view
         rvTweets = findViewById(R.id.rvTweets);
@@ -84,6 +96,7 @@ public class TimelineActivity extends AppCompatActivity {
         assert layoutManager != null;
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvTweets.getContext(),
                 layoutManager.getOrientation());
+
 
         scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
@@ -98,12 +111,24 @@ public class TimelineActivity extends AppCompatActivity {
         rvTweets.addItemDecoration(dividerItemDecoration);
         rvTweets.addOnScrollListener(scrollListener);
         populateHomeTimeline();
+
+
+        Tweet tweet = Parcels.unwrap(getIntent().getParcelableExtra("tweet"));
+        if(tweet != null) {
+            // Update the RV with the tweet
+            // Modify data source of tweets
+            tweets.add(0, tweet);
+            // Notify Adapter
+            adapter.notifyItemInserted(0);
+            rvTweets.smoothScrollToPosition(0);
+        }
     }
 
     @BindingAdapter("app:goneUnless")
     public static void goneUnless(View view, Boolean visible) {
         view.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
+
 
     private void loadMoreData() {
         // 1. Send an API request to retrieve appropriate paginated data
@@ -138,20 +163,6 @@ public class TimelineActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
-    }
-
-    @SuppressLint("NonConstantResourceId")
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.compose:
-                Intent i = new Intent(this, ComposeActivity.class);
-                startActivityForResult(i, REQUEST_CODE);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-
     }
 
     @Override

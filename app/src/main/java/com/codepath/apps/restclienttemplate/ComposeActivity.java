@@ -1,20 +1,12 @@
 package com.codepath.apps.restclienttemplate;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 
 import com.codepath.apps.restclienttemplate.databinding.ActivityComposeBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
@@ -50,7 +42,7 @@ public class ComposeActivity extends AppCompatActivity {
                 parentScreenName = extras.getString("parent_user_screen_name");
                 replyPrefix = String.format("@%s", parentScreenName);
                 binding.parentScreenName.setText(parentScreenName);
-                binding.etCompose.setText(replyPrefix);
+                binding.etLayout.setPrefixText(replyPrefix);
             }
         }
         binding.etCompose.requestFocus();
@@ -78,6 +70,12 @@ public class ComposeActivity extends AppCompatActivity {
                         try {
                             Tweet tweet = Tweet.fromJson(json.jsonObject);
                             Log.i(TAG, "Published tweet says: " + tweet);
+
+                            if(isReply) {
+                                Intent i = new Intent(ComposeActivity.this, TimelineActivity.class);
+                                i.putExtra("tweet", Parcels.wrap(tweet));
+                                startActivity(i);
+                            }
                             Intent i = new Intent();
                             // set result code and bundle data
                             i.putExtra("tweet", Parcels.wrap(tweet));
@@ -97,11 +95,7 @@ public class ComposeActivity extends AppCompatActivity {
 
                 // Make API call to Twitter to publish
                 if(isReply) {
-                    if (!tweetContent.startsWith(replyPrefix)) {
-                        Snackbar.make(ComposeActivity.this, binding.btnTweet, "Replies must start with: " + replyPrefix, Snackbar.LENGTH_LONG).show();
-                        return;
-                    }
-                    client.publishTweet(tweetContent, extras.getLong("parent_id"), handler);
+                    client.publishTweet(String.format("%s %s", binding.etLayout.getPrefixText(), tweetContent), extras.getLong("parent_id"), handler);
                 } else {
                     client.publishTweet(tweetContent, handler);
                 }

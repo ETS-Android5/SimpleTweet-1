@@ -28,6 +28,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     public static final String TAG = "ADAPTER";
     Context context;
     List<Tweet> tweets;
+    TimelineActivity timelineActivity;
 
     // Pass in context and list of tweets
     public TweetsAdapter(Context context, List<Tweet> tweets) {
