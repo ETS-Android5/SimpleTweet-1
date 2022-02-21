@@ -28,7 +28,6 @@ import java.util.Objects;
 
 import okhttp3.Headers;
 
-// TODO add more detail to the view (i.e. RetweetCount, LikeCount, Retweet, Like)
 public class DetailActivity extends AppCompatActivity {
 
     public static final String TAG = "DetailActivity";

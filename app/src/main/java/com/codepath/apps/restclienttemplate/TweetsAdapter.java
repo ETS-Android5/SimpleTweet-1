@@ -25,15 +25,21 @@ import java.util.List;
 
 public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
 
+    public interface startTweetIntentImpl {
+        void startIntent(Tweet tweet);
+    }
+
     public static final String TAG = "ADAPTER";
     Context context;
     List<Tweet> tweets;
     TimelineActivity timelineActivity;
+    startTweetIntentImpl tweetIntentImpl;
 
     // Pass in context and list of tweets
-    public TweetsAdapter(Context context, List<Tweet> tweets) {
+    public TweetsAdapter(Context context, List<Tweet> tweets, startTweetIntentImpl tweetIntentImpl) {
         this.context = context;
         this.tweets = tweets;
+        this.tweetIntentImpl = tweetIntentImpl;
     }
 
     // For each row, inflate a layout
@@ -134,11 +140,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             binding.ivReply.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent i = new Intent(context, ComposeActivity.class);
-                    i.putExtra("parent_id", tweet.id);
-                    i.putExtra("parent_user_screen_name", tweet.user.screenName);
-                    i.putExtra("isReply", true);
-                    context.startActivity(i);
+                    tweetIntentImpl.startIntent(tweet);
                 }
             });
 

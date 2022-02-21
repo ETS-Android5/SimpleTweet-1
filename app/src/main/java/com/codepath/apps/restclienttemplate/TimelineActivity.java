@@ -84,12 +84,23 @@ public class TimelineActivity extends AppCompatActivity {
             }
         });
 
+        TweetsAdapter.startTweetIntentImpl startTweetIntent = new TweetsAdapter.startTweetIntentImpl() {
+            @Override
+            public void startIntent(Tweet tweet) {
+                Intent i = new Intent(TimelineActivity.this, ComposeActivity.class);
+                i.putExtra("parent_id", tweet.id);
+                i.putExtra("parent_user_screen_name", tweet.user.screenName);
+                i.putExtra("isReply", true);
+                startActivityForResult(i, REQUEST_CODE);
+            }
+        };
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         // Find the recycler view
         rvTweets = findViewById(R.id.rvTweets);
         // Init the list of tweets and adapter
         tweets = new ArrayList<>();
-        adapter = new TweetsAdapter(this, tweets);
+        adapter = new TweetsAdapter(this, tweets, startTweetIntent);
         rvTweets.setAdapter(adapter);
         // Recycler view setup: layout manager and the adapter
         rvTweets.setLayoutManager(layoutManager);
@@ -111,17 +122,6 @@ public class TimelineActivity extends AppCompatActivity {
         rvTweets.addItemDecoration(dividerItemDecoration);
         rvTweets.addOnScrollListener(scrollListener);
         populateHomeTimeline();
-
-
-        Tweet tweet = Parcels.unwrap(getIntent().getParcelableExtra("tweet"));
-        if(tweet != null) {
-            // Update the RV with the tweet
-            // Modify data source of tweets
-            tweets.add(0, tweet);
-            // Notify Adapter
-            adapter.notifyItemInserted(0);
-            rvTweets.smoothScrollToPosition(0);
-        }
     }
 
     @BindingAdapter("app:goneUnless")
