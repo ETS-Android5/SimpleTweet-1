@@ -3,6 +3,7 @@ package com.codepath.apps.restclienttemplate;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.DialogFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,11 +27,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import fragments.ReplySentAlertFragment;
 import okhttp3.Headers;
 
 public class DetailActivity extends AppCompatActivity {
 
     public static final String TAG = "DetailActivity";
+    public static final String FRAG_TAG = "REPLY_ALERT";
     ActivityDetailBinding binding;
     ImageView ivProfilePicture;
     ImageView ivTweetImage;
@@ -123,6 +126,10 @@ public class DetailActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(int statusCode, Headers headers, JSON json) {
                         Log.i(TAG, "onSuccess to publish tweet");
+                        DialogFragment replyFragment = new ReplySentAlertFragment();
+                        binding.replyTextEdit.clearFocus();
+                        binding.replyTextEdit.setText("");
+                        replyFragment.show(getSupportFragmentManager(), FRAG_TAG);
                         Snackbar.make(view, String.format("Reply to @%s sent!", tweet.user.screenName), Snackbar.LENGTH_LONG).show();
                     }
 

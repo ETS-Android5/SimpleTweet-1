@@ -9,5 +9,7 @@
     <string name="et_hint">What\'s up?</string>
     <string name="w_empty_tweet">Sorry, tweets can\'t be empty</string>
     <string name="w_max_tweet_length">Sorry, your tweet is too long</string>
+    <string name="reply_alert">Reply Sent!</string>
+    <string name="dismiss_alert">Dismiss</string>
 
 </resources>
