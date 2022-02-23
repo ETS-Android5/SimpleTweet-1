@@ -16,18 +16,15 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.codepath.apps.restclienttemplate.databinding.ActivityDetailBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
-import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import fragments.ReplySentAlertFragment;
+import com.codepath.apps.restclienttemplate.fragments.ReplySentAlertFragment;
 import okhttp3.Headers;
 
 public class DetailActivity extends AppCompatActivity {
